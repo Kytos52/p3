@@ -1,0 +1,564 @@
+EJERCICIO 4
+
+******************************************************************************************
+******************************************************************************************
+
+public class DNA {
+
+    private String bases;
+
+    public DNA(String bases) throws Exception{
+        setBases(bases);
+    }
+
+    public String getBases(){
+        //TOdo
+        return bases;
+    }
+
+    public void setBases(String bases) throws Exception{
+        //TODO
+        String caracteres = "CTGActga";
+        boolean caracterDiferente = false;
+        for (int i = 0; i < bases.length(); i++){
+            if (!caracteres.contains(String.valueOf(bases.charAt(i)))) {
+                caracterDiferente = true;
+            }
+        }
+        if (caracterDiferente){
+            throw new Exception("[ERROR] DNA's pattern is incorrect");
+        }else{
+            this.bases = bases.toUpperCase();
+            System.out.println("Bases vales "+ getBases());
+        }
+
+    }
+
+    public boolean isProtein(){
+        //TODO
+        boolean inicioATGfinalTGA = false;
+        boolean multiplo3 = false;
+        if (bases.endsWith("TGA") && bases.startsWith("ATG")){inicioATGfinalTGA = true;}
+        if(bases.length()>=5 &&  bases.length()%3 == 0){multiplo3 = true;}
+        if (inicioATGfinalTGA && multiplo3){return true;}
+        return false;
+    }
+
+    public void addSequence(String sequence, int... position) throws Exception{
+        //TODO
+        boolean exceptionIndiceFueraRango = false;
+        StringBuilder sequenceBuilder = new StringBuilder(getBases());
+
+        if(position.length ==0 ){ //posicion sin argumentos
+            sequenceBuilder.append(sequence);
+        }
+
+        for (int i =0; i< position.length;i++){
+            if(Integer.parseInt(String.valueOf(position[i])) >sequenceBuilder.length())
+            {
+                throw new Exception("[ERROR] position is greater than sequence length");
+
+            }else{
+                sequenceBuilder.insert(position[i], sequence);
+            }
+        }
+        setBases(sequenceBuilder.toString());
+    }
+
+    public String toRNA(){
+        //TODO
+        StringBuilder Rna = new StringBuilder(getBases());
+        Rna.reverse();
+        for (int i = 0; i < Rna.length();i++){
+            switch (Rna.charAt(i)){
+                case 'A':
+                    Rna.replace(i,i,"U");
+                    Rna.deleteCharAt(i+1);
+                    break;
+                case 'T':
+                    Rna.replace(i,i,"A");
+                    Rna.deleteCharAt(i+1);
+                    break;
+                case 'C':
+                    Rna.replace(i,i,"G");
+                    Rna.deleteCharAt(i+1);
+                    break;
+                default :
+                    Rna.replace(i,i,"C");
+                    Rna.deleteCharAt(i+1);
+            }
+        }
+        return Rna.toString();
+    }
+
+    public String sequencesRepeatedLength(int l) {
+        //TODO
+        StringBuilder repetidas = new StringBuilder();  //repetidas almacena todas las palabras repetidas separadas por un espacio
+        String[] cadenas = new String[getBases().length()-l+1]; //cadenas es un array con todas las palabras posibles de "l" letras
+                                                                //que puedo formar con la cadena inicial
+        for(int i = 0; i< cadenas.length;i++){
+            cadenas[i]=getBases().substring(i,i+l); //lleno el array con las palabras de "l" letras
+        }
+
+        for(int i = 0; i< cadenas.length-1;i++) { //Recorro el array buscando coincidencias
+            Boolean duplicado = false;
+            for (int j = i + 1; j < cadenas.length; j++) {
+                if (cadenas[i].equals(cadenas[j])) {
+                    if (!cadenas[i].equalsIgnoreCase("")) {
+                        duplicado = true;
+                    }
+                    cadenas[j] = "";
+                }
+            }
+            if (duplicado) {
+                repetidas.append(cadenas[i]);
+                repetidas.append(" ");
+                cadenas[i] = "";
+            }
+        }
+
+        String cadenaRepetidas = repetidas.substring(0,repetidas.length()-1);
+        return cadenaRepetidas;
+    }
+}
+
+*************************************************************************************************************************************************
+FIN EJERCICIO 4
+*************************************************************************************************************************************************
+
+*************************************************************************************************************************************************
+EJERCICIO 1
+*************************************************************************************************************************************************
+
+import java.time.LocalDate;
+
+
+public class Car {
+
+    //Atributos
+    private static final double VAT_SPAIN = 21;
+    private static final double VAT_FRANCE = 21.5;
+    private  int id;
+    private static int nextId = -1;
+    private String make;
+    private String model;
+    private int licenseYear;
+    private char fuel;
+    private String licensePlate;
+    private double price;
+
+    //Constructores
+    public Car(){
+        this("Lorem","IPSUM",2000,'P',"0000CDV",10000);
+        //id= getNextID();
+    }
+    public Car( String make, String model, int licenseYear, char fuel, String licensePlate, double price){
+        setMake(make);
+        setModel(model);
+        setLicenseYear(licenseYear);
+        setFuel(fuel);
+        setLicensePlate(licensePlate);
+        setPrice(price);
+        setId();
+        Car.nextId++;
+    }
+    //Métodos
+    public void setMake(String make){
+        if (make.length()>15){
+            System.out.println("[ERROR] Car's make cannot be longer than 15 characters");
+        }else {
+            String minuscula;
+            String primera;
+            minuscula = make.toLowerCase();
+            primera = minuscula.substring(0,1).toUpperCase()+minuscula.substring(1);
+            this.make = primera;
+        }
+    }
+
+    public String getMake(){
+        return make;
+    }
+
+    public void setModel(String model){
+        if (model.length()>20){
+            System.out.println("[ERROR] Car's model cannot be longer than 20 characters");
+        }else {
+            String mayusculas = model.toUpperCase();
+            this.model = mayusculas;
+        }
+    }
+    public String getModel(){
+        return model;
+    }
+
+
+    public void setLicenseYear(int licenseYear){
+        LocalDate fecha =LocalDate.now();
+        int any = fecha.getYear();
+
+        if (licenseYear < 2000 || licenseYear >any){
+            System.out.println("[ERROR] Car's license year must be in range [2000, current year]");
+        }else {
+            this.licenseYear = licenseYear;
+        }
+    }
+
+    public int getLicenseYear(){
+        return licenseYear;
+    }
+
+    public void setFuel(char fuelN){
+        if(fuelN !='P' && fuelN !='D' && fuelN !='H' && fuelN !='E'){
+            System.out.println ("[ERROR] Car's fuel is incorrect");
+
+        }else{
+            this.fuel = fuelN;
+        }
+    }
+    public char getFuel(){
+        return fuel;
+    }
+
+
+    public void setLicensePlate (String licensePlate){
+        if (licensePlate.matches("[0-9][0-9][0-9][0-9]+[A-Z][A-Z][A-Z]")) {
+            this.licensePlate = licensePlate;
+            return;
+        }
+        if (licensePlate.matches("[A-Z][A-Z]+-+[0-9][0-9][0-9]+-+[A-Z][A-Z]")){
+            this.licensePlate = licensePlate;
+            return;
+        }
+
+        System.out.println("[ERROR] Car's license plate pattern is incorrect");
+    }
+
+    public String getLicensePlate(){
+        return licensePlate;
+    }
+
+    public void setPrice (double price){
+        this.price = price;
+    }
+    public double getPrice(){
+        if(getLicensePlate().matches("[0-9][0-9][0-9][0-9]+[A-Z][A-Z][A-Z]")) {
+            return price * (1 + (VAT_SPAIN / 100));
+        }
+        return price * ( 1 + (VAT_FRANCE)/100);
+    }
+
+    private void setId(){
+        this.id = getNextId();
+    }
+    public int getId(){
+        return this.id;
+    }
+
+    public  static int getNextId(){
+        //int nextID = Car.nextId;
+        return  Car.nextId;//nextId;//nextID;
+    }
+
+    public boolean getWarranty(){
+        boolean warranty = true;
+        LocalDate fecha =LocalDate.now();
+        int any = fecha.getYear();
+        if (any-this.licenseYear >= 5) {
+            warranty = false;
+        }
+
+        return warranty;
+    }
+
+}
+
+*****************************************************************************************************************************************************
+FIN EJERCICIO 1
+*****************************************************************************************************************************************************
+
+*****************************************************************************************************************************************************
+EJERCICIO 2 - 3
+*****************************************************************************************************************************************************
+
+import java.time.LocalDate;
+
+/**
+ * Esta clase representa los datos de un coche
+ * @author Mario Bandrés
+ * @version 1.0
+ */
+
+
+
+public class Car {
+
+
+    /**
+     * Cuantifica el tipo impositivo en España
+     */
+    private static final double VAT_SPAIN = 21;
+    /**
+     * Cuantifica el tipo impositivo en Francia
+     */
+    private static final double VAT_FRANCE = 21.5;
+    /**
+     * Identificador unico numerado de forma ascendente
+     */
+    private  int id;
+    /**
+     * Siguiente numero de identificador qeu se asignara al proximo id
+     */
+    private static int nextId = 0;
+    /**
+     * Nombre del fabricante
+     */
+    private String make;
+    /**
+     * Modelo de vehiculo
+     */
+    private String model;
+    /**
+     * Año de matriculacion
+     */
+    private int licenseYear;
+    /**
+     * Tipo de carburante
+     */
+    private char fuel;
+    /**
+     * Matricula del vehiculo
+     */
+    private String licensePlate;
+    /**
+     * Precio de venta
+     */
+    private double price;
+
+    //Constructores
+
+    /**
+     * Metodo constructor por defecto
+     * @throws Exception Excepcion
+     */
+    public Car() throws Exception {
+        this("Lorem","IPSUM",2000,'P',"0000CDV",10000);
+        //id= getNextID();
+    }
+
+    /**
+     * Metodo constructor con parámetros
+     * @param make Marca del vehiculo
+     * @param model Modelo del vehiculo
+     * @param licenseYear Año de matriculacion
+     * @param fuel Tipo de carburante
+     * @param licensePlate Matriculo del vehiculo
+     * @param price Precio de venta
+     * @throws Exception Excepcion
+     */
+    public Car(String make, String model, int licenseYear, char fuel, String licensePlate, double price) throws Exception {
+        setMake(make);
+        setModel(model);
+        setLicenseYear(licenseYear);
+        setFuel(fuel);
+        setLicensePlate(licensePlate);
+        setPrice(price);
+        setId();
+        Car.nextId++;
+    }
+
+
+    /**
+     * Metodo make setter
+     * @param make Marca que asigna al vehiculo
+     * @throws Exception cuando el parametro "make" es mas largo del 15 caracteres
+     */
+    public void setMake(String make) throws Exception{
+        if (make.length()>15){
+            throw  new Exception("[ERROR] Car's make cannot be longer than 15 characters");
+
+        }else {
+            String minuscula;
+            String primera;
+            minuscula = make.toLowerCase();
+            primera = minuscula.substring(0,1).toUpperCase()+minuscula.substring(1);
+            this.make = primera;
+        }
+    }
+
+    /**
+     * Metodo make getter
+     * @return Retrona la marca del vehiculo
+     */
+    public String getMake(){
+        return make;
+    }
+
+    /**
+     * Metodo model setter
+     * @param model Modelo que asigna al vehiculo
+     * @throws Exception cuando el parametro "model" excede de 20 caracteres
+     */
+    public void setModel(String model) throws Exception{
+        if (model.length()>20){
+            throw  new Exception("[ERROR] Car's model cannot be longer than 20 characters");
+
+        }else {
+            String mayusculas = model.toUpperCase();
+            this.model = mayusculas;
+        }
+    }
+
+    /**
+     * Metodo model getter
+     * @return Retorna un String con el modelo del vehiculo
+     */
+    public String getModel(){
+        return model;
+    }
+
+    /**
+     * Metodo licenseYear setter
+     * @param licenseYear Año de matriculación del vehículo
+     * @throws Exception cuando el año de matriculación no esta comprendido entre al año 2000 y el actual
+     */
+    public void setLicenseYear(int licenseYear)throws Exception{
+        LocalDate fecha =LocalDate.now();
+        int any = fecha.getYear();
+
+        if (licenseYear < 2000 || licenseYear >any){
+            throw  new Exception("[ERROR] Car's license year must be in range [2000, current year]");
+
+        }else {
+            this.licenseYear = licenseYear;
+        }
+    }
+
+    /**
+     * Metodo licenseYear getter
+     * @return Retorna un entero con la fecha de matriculacion
+     */
+    public int getLicenseYear(){
+        return licenseYear;
+    }
+
+    /**
+     * @param fuelN Tipo de carburante del vehiculo
+     * @throws Exception cuando el parametro recibido es diferente de 'P' o 'D' o 'H' o 'E'
+     */
+    public void setFuel(char fuelN)throws Exception{
+        if(fuelN !='P' && fuelN !='D' && fuelN !='H' && fuelN !='E'){
+            throw new Exception("[ERROR] Car's fuel is incorrect");
+
+        }else{
+            this.fuel = fuelN;
+        }
+    }
+
+    /**
+     * Metodo fuel getter
+     * @return Retorna un char que representa el tipo de carburante qeu utiliza el vehiculo
+     */
+    public char getFuel(){
+        return fuel;
+    }
+
+    /**
+     * Metodo licesePlate setter
+     * @param licensePlate Matrícula del vehiculo
+     * @throws Exception cuando la matricula no tiene formato español ( ej. 1234AAA )
+     *                  o formato francés ( ej. FF-123-FF )
+     */
+
+    public void setLicensePlate (String licensePlate)throws Exception{
+        if (licensePlate.matches("[0-9][0-9][0-9][0-9]+[A-Z][A-Z][A-Z]")) {
+            this.licensePlate = licensePlate;
+            return;
+        }
+        if (licensePlate.matches("[A-Z][A-Z]+-+[0-9][0-9][0-9]+-+[A-Z][A-Z]")){
+            this.licensePlate = licensePlate;
+            return;
+        }
+        throw new Exception("[ERROR] Car's license plate pattern is incorrect");
+
+    }
+
+    /**
+     * Metodo licensePlate getter
+     * @return Retorna un String con la matricula del vehiculo
+     */
+    public String getLicensePlate(){
+        return licensePlate;
+    }
+
+    /**
+     * Metodo price setter
+     * @param price Precio de venta del vehiculo
+     */
+
+    public void setPrice (double price){
+        this.price = price;
+    }
+
+    /**
+     * Metodo price getter
+     * @return Retorna un double con el precio de venta incluido el impuesto a pagar
+     */
+    public double getPrice(){
+        if(getLicensePlate().matches("[0-9][0-9][0-9][0-9]+[A-Z][A-Z][A-Z]")) {
+            return price * (1 + (VAT_SPAIN / 100));
+        }
+        return price * ( 1 + (VAT_FRANCE)/100);
+    }
+
+    /**
+     * Metodo id setter
+     */
+    private void setId(){
+        this.id = getNextId();
+    }
+
+    /**
+     * Metodo ID getter
+     * @return Retorna un entero con el id del vehiculo
+     */
+    public int getId(){
+        return this.id;
+    }
+
+    /**
+     * Metodo NextId getter
+     * @return Retorna un entero con el siguiente id a asignar
+     */
+    public  static int getNextId(){
+        return  Car.nextId;
+    }
+
+    /**
+     * Metodo warranty getter
+     * @return Retorna un booleano indicando si el vehiculo esta en garantia o no en función de su antigüedad
+     */
+    public boolean getWarranty(){
+        boolean warranty = true;
+        LocalDate fecha =LocalDate.now();
+        int any = fecha.getYear();
+        if (any-this.licenseYear >= 5) {
+            warranty = false;
+        }
+
+        return warranty;
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
